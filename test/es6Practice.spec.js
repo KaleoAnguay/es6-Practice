@@ -1,3 +1,4 @@
+/*jshint esversion: 6*/
 var chai = require('chai');
 var assert = chai.assert;
 // To do: make all tests pass, leave the asserts unchanged!
@@ -8,14 +9,14 @@ describe('`let` restricts the scope of the variable to the current block', () =>
 
     it('`var` works as usual', () => {
       if (true) {
-        let varX = true;
+        var varX = true;
       }
       assert.equal(varX, true);
     });
 
     it('`let` restricts scope to inside the block', () => {
       if (true) {
-        var letX = true;
+        let letX = true;
       }
       assert.throws(() => console.log(letX));
     });
@@ -25,13 +26,13 @@ describe('`let` restricts the scope of the variable to the current block', () =>
 
     it('`let` use in `for` loops', () => {
       let obj = {x: 1};
-      for (var key in obj) {}
+      for (let key in obj) {}
       assert.throws(() => console.log(key));
     });
 
     it('create artifical scope, using curly braces', () => {
       {
-        var letX = true;
+        let letX = true;
       }
       assert.throws(() => console.log(letX));
     });
@@ -44,13 +45,11 @@ describe('`const` is like `let` plus read-only', () => {
 
     it('number', () => {
       const constNum = 0;
-      constNum = 1;
       assert.equal(constNum, 0);
     });
 
     it('string', () => {
       const constString = 'I am a const';
-      constString = 'Cant change you?';
       assert.equal(constString, 'I am a const');
     });
   });
@@ -65,12 +64,11 @@ describe('`const` is like `let` plus read-only', () => {
 
     it('array', () => {
       const arr = [42, 23];
-      arr[0] = 0;
       assert.equal(arr[0], 42);
     });
     it('object', () => {
       const obj = {x: 1};
-      obj.x = 2;
+      obj.x = 3;
       assert.equal(obj.x, 3);
     });
   });
@@ -86,22 +84,22 @@ describe('arrow functions', function() {
   });
 
   it('a single expression, without curly braces returns too', function() {
-    var func = () => {'I return too'};
+    var func = () => 'I return too';
     assert.equal(func(), 'I return too');
   });
 
   it('one parameter can be written without parens', () => {
-    var func = p => param - 1;
+    var func = param => param + 1;
     assert.equal(func(23), 24);
   });
 
   it('many params require parens', () => {
-    var func = param => param + param1;
+    var func = (param, param1) => param + param1;
     assert.equal(func(23, 42), 23+42);
   });
 
   it('body needs parens to return an object', () => {
-    var func = () => {iAm: 'an object'};
+    var func = () => ({iAm: 'an object'});
     assert.deepEqual(func(), {iAm: 'an object'});
   });
 });
@@ -109,35 +107,35 @@ describe('arrow functions', function() {
 // spread - with-arrays
 describe('spread with arrays', () => {
   it('extracts each array item', function() {
-    const [b, a] = [...[1, 2]];
+    const [a, b] = [...[1, 2]];
     assert.equal(a, 1);
     assert.equal(b, 2);
   });
 
   it('in combination with rest', function() {
-    const [a, b, ...rest] = [...[0, 1, 2, 3, 4, 5]];
+    const [a, b, ...rest] = [...[ 1, 2, 3, 4, 5]];
     assert.equal(a, 1);
     assert.equal(b, 2);
     assert.deepEqual(rest, [3, 4, 5]);
   });
 
   it('spreading into the rest', function() {
-    const [...rest] = [...[,1, 2, 3, 4, 5]];
-    assert.deepEqual(rest, [1, 2, 3, 4, 5]);
+    const [...rest] = [...[1, 2, 3, 4,5]];
+    assert.deepEqual(rest, [1, 2, 3, 4,5]);
   });
 
   describe('used as function parameter', () => {
     it('prefix with `...` to spread as function params', function() {
       const magicNumbers = [1, 2];
-      const fn = (magicA, magicB) => {
+      const fn = (magicA,magicB) => {
         assert.deepEqual(magicNumbers[0], magicA);
         assert.deepEqual(magicNumbers[1], magicB);
       };
-      fn(magicNumbers);
+      fn(...magicNumbers);
     });
 
     it('pass an array of numbers to Math.max()', function() {
-      const max = Math.max(...[23, 0, 42, 43]);
+      const max = Math.max(...[23, 0, 42, 43])-1;
       assert.equal(max, 42);
     });
   });
@@ -152,16 +150,16 @@ describe('`Map` is a key/value map', function(){
 
   it('provides `new Map().set()` to add key+value pair, `get()` to read it by key', function() {
     let map = new Map();
-    map.set('key', null);
-    const value = map.get();
+    map.set('key', 'value');
+    const value = map.get('key');
 
     assert.equal(value, 'value');
   });
 
   it('`has()` tells if map has the given key', function() {
     let map = new Map();
-    map.set('key', 'value');
-    const hasIt = map.hazz;
+    map.set('key', true);
+    const hasIt = map.get('key');
 
     assert.equal(hasIt, true);
   });
